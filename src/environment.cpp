@@ -8,6 +8,7 @@
 // using templates for processPointClouds so also include .cpp to help linker
 #include "processPointClouds.cpp"
 
+//creates a highway with cars to later render it in a viewer
 std::vector<Car> initHighway(bool renderScene, pcl::visualization::PCLVisualizer::Ptr& viewer)
 {
 
@@ -42,13 +43,40 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
     // ----------------------------------------------------
     
     // RENDER OPTIONS
-    bool renderScene = true;
+    bool renderScene = false;
     std::vector<Car> cars = initHighway(renderScene, viewer);
     
-    // TODO:: Create lidar sensor 
+    // TODO:
+    // Create simulated lidar sensor and scan environment
+    Lidar* lidar = new Lidar(cars,0);       //must notify surrounding objects, location of objects in environment 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud = lidar->scan(); // since it knows locations of objects it knows how to scan
+    //renderRays(viewer, lidar->position, inputCloud); // display rays from the lidar as the origin
+    //renderPointCloud(viewer, inputCloud,"inputCloud",Color(1,0,1));
 
-    // TODO:: Create point processor
-  
+    // Create point processor
+    //stack version
+    ProcessPointClouds<pcl::PointXYZ> pointProcessor;
+    //heap version
+    //ProcessPointClouds<pcl::PointXYZ>* pointProcessor = new ProcessPointClouds<pcl::PointXYZ>();
+
+    // Segment Obstacles and Plane
+    std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlane(inputCloud, 100, 0.2);
+    //renderPointCloud(viewer,segmentCloud.first,"planeCloud",Color(1,0,0));
+    //renderPointCloud(viewer,segmentCloud.second,"obstCloud",Color(0,1,0));
+
+    //Cluster points in obstacle cloud to assign boxes
+    std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloudClusters = pointProcessor.Clustering(segmentCloud.second, 1.0, 3, 30);
+    int clusterId = 0;
+    std::vector<Color> colors = {Color(1,0,0), Color(0,1,0), Color(0,0,1)};
+    for(pcl::PointCloud<pcl::PointXYZ>::Ptr cluster : cloudClusters)
+    {
+        std::cout << "cluster size ";
+        pointProcessor.numPoints(cluster);
+        renderPointCloud(viewer,cluster,"obstCloud"+std::to_string(clusterId),colors[clusterId]);
+        //Box box = pointProcessor.BoundingBox(cluster);
+        //renderBox(viewer,box,clusterId);        
+        ++clusterId;
+    }
 }
 
 
