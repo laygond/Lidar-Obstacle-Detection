@@ -1,9 +1,44 @@
 # Sensor Fusion Self-Driving Car Course
+Create 3D bounding boxes to enclose vehicles by implementing 3D RANSAC for segmentation and KD-Tree & Euclidean algorithms for clustering.
 
 <img src="media/ObstacleDetectionFPS.gif" width="700" height="400" />
 
 
 ## Directory Structure
+```
+.Lidar-Obstacle-Detection
+├── build.sh
+├── run.sh
+├── CMakeLists.txt
+├── README_images
+│   └── ...
+├── README.md
+└── src
+    ├── environment.cpp
+    ├── processPointClouds.cpp
+    ├── processPointClouds.h
+    ├── quiz
+    │   ├── cluster
+    │   │   ├── cluster.cpp
+    │   │   ├── CMakeLists.txt
+    │   │   └── kdtree.h
+    │   └── ransac
+    │       ├── CMakeLists.txt
+    │       └── ransac2d.cpp
+    ├── render
+    │   ├── box.h
+    │   ├── render.cpp
+    │   └── render.h
+    └── sensors
+        ├── data/pcd
+        │   ├── data_1
+		│	│	└── ...
+        │   ├── data_2
+		│	│	└── ...
+        │   └── simpleHighway.pcd
+        └── lidar.h
+```
+
 Code Structure
 Top-level CMakeLists.txt
 Readme
@@ -24,12 +59,21 @@ You will mostly be working out of two main files, which are environment.cpp and 
 
 There are some other files worth mentioning, like sensors/lidar.h, which simulates lidar sensing and creates point cloud data. Also render.cpp and render.h which have functions for rendering objects onto the screen.
 
+(lidar and environment are simulated so data generation (point cloud) is simulated as well)
+
+This repo creates its own [function templates](http://www.cplusplus.com/doc/oldtutorial/templates/) to process any type of PCD: PointXYZ, PointXYZI, etc
+
+point cloud data which could be very large. By instatinating on the heap, we have more memory to work with than the 2MB on the stack. However, it takes longer to look up objects on the heap, while stack lookup is very fast.
+
 ## Simulator
 Here you have a simple highway simulator environment with the ego car in green in the center lane (thats your car), and the other traffic cars in blue. Everything is rendered using PCL with simple boxes, lines, and colors. You can move around your environment with the mouse. Try holding the left mouse button to orbit around the scene. You can also pan around the scene by holding the middle mouse button and moving. To zoom, use the middle scroll mouse button or the right mouse button while moving.
 Zoom: hold the right mouse key and move the mouse forward/backwards, or use your mouse scroller.
 Pan: Hold down the middle mouse button (the scroller) and move the mouse.
 Rotate: Hold the left mouse button and move the mouse.
 
+Some functions that use the pcl viewer inside environment.cpp are initCamera and initHighway. The initCamera function helps you set up different viewing angles in your window. There are five different options: XY, TopDown, Side, and FPS. XY gives a 45 degree angle view, while FPS is First Person Sense and gives the sensation of being in the car’s driver seat.
+
+PCL viewer is for graphics. it renders points and shapes. initCamera and initHighway from environment.cpp use it.
 
 ### Welcome to the Sensor Fusion course for self-driving cars.
 
