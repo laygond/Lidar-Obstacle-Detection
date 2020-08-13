@@ -22,21 +22,61 @@ void ProcessPointClouds<PointT>::numPoints(typename pcl::PointCloud<PointT>::Ptr
     std::cout << cloud->points.size() << std::endl;
 }
 
-
+/**
+ * Apply Voxel Grid Filtering and extract Region of Interest
+ * Returns downsampled cloud with only points inside the RoI
+ *  
+ *     @param cloud     : input cloud
+ *     @param filterRes : voxel grid size,
+ *     @param minPoint  : min points of region of interest.
+ *     @param maxPoint  : max points of region of interest.
+ *     
+ */
 template<typename PointT>
 typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(typename pcl::PointCloud<PointT>::Ptr cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint)
 {
-
     // Time segmentation process
     auto startTime = std::chrono::steady_clock::now();
 
-    // TODO:: Fill in the function to do voxel grid point reduction and region based filtering
+    // TODO:
+    // Create voxel grid point reduction object: downsample the dataset using a leaf size of filterRes
+    pcl::VoxelGrid<PointT> vg;
+    typename pcl::PointCloud<PointT>::Ptr cloud_filtered (new pcl::PointCloud<PointT>() );
+    vg.setInputCloud (cloud);
+    vg.setLeafSize (filterRes, filterRes, filterRes); //voxel's dimension in [m]
+    vg.filter (*cloud_filtered);
 
+    // Region based filtering
+    pcl::CropBox<PointT> region_box(false); // true means extract indeces from points outside box
+    region_box.setMin(minPoint);
+    region_box.setMax(maxPoint);
+    region_box.setInputCloud(cloud_filtered);
+    region_box.filter(*cloud_filtered);
+
+    // Remove Points from Roof
+    std::vector<int> indeces; 
+    pcl::CropBox<PointT> roof_box(true); 
+    roof_box.setMin(Eigen::Vector4f (-1.5 ,-1.7 ,-1  ,1));
+    roof_box.setMax(Eigen::Vector4f (2.6  , 1.7 ,-.4 ,1));
+    roof_box.setInputCloud(cloud_filtered);
+    roof_box.filter(indeces);
+
+    pcl::PointIndices::Ptr inliers (new pcl::PointIndices);
+    for (int idx: indeces) 
+       inliers->indices.push_back(idx);
+    
+    pcl::ExtractIndices<PointT> extract;      // Create the filtering object
+    extract.setInputCloud (cloud_filtered);
+    extract.setIndices (inliers);
+    extract.setNegative (true);   //extract points different than inliers (if false then it extracts inliers)
+    extract.filter (*cloud_filtered);
+
+    // Calculate Time of Filtering
     auto endTime = std::chrono::steady_clock::now();
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "filtering took " << elapsedTime.count() << " milliseconds" << std::endl;
 
-    return cloud;
+    return cloud_filtered;
 
 }
 
@@ -109,7 +149,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 }
 
 
-/* *
+/**
 * Euclidean Clustering: associate groups of points by how close together they are.
 *
 * @param distance tolerance.: Any points within that distance will be grouped together.
@@ -182,7 +222,9 @@ Box ProcessPointClouds<PointT>::BoundingBox(typename pcl::PointCloud<PointT>::Pt
     return box;
 }
 
-
+/* *
+* Save Point Cloud to File
+*/
 template<typename PointT>
 void ProcessPointClouds<PointT>::savePcd(typename pcl::PointCloud<PointT>::Ptr cloud, std::string file)
 {
@@ -190,7 +232,9 @@ void ProcessPointClouds<PointT>::savePcd(typename pcl::PointCloud<PointT>::Ptr c
     std::cerr << "Saved " << cloud->points.size () << " data points to "+file << std::endl;
 }
 
-
+/* *
+* Load Single Point Cloud Data File
+*/
 template<typename PointT>
 typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::loadPcd(std::string file)
 {
@@ -206,14 +250,16 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::loadPcd(std::s
     return cloud;
 }
 
-
+/* *
+* Stream Chronologically Point Cloud Data from directory path
+*/
 template<typename PointT>
 std::vector<boost::filesystem::path> ProcessPointClouds<PointT>::streamPcd(std::string dataPath)
 {
 
     std::vector<boost::filesystem::path> paths(boost::filesystem::directory_iterator{dataPath}, boost::filesystem::directory_iterator{});
 
-    // sort files in accending order so playback is chronological
+    // sort files in ascending order so playback is chronological
     sort(paths.begin(), paths.end());
 
     return paths;
