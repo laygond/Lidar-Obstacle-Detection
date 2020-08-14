@@ -13,7 +13,7 @@ template<typename PointT>
 ProcessPointClouds<PointT>::~ProcessPointClouds() {}
 
 
-/* *
+/**
 * Displays in console the number of points (size) of input cloud 
 */
 template<typename PointT>
@@ -21,6 +21,7 @@ void ProcessPointClouds<PointT>::numPoints(typename pcl::PointCloud<PointT>::Ptr
 {
     std::cout << cloud->points.size() << std::endl;
 }
+
 
 /**
  * Apply Voxel Grid Filtering and extract Region of Interest
@@ -77,10 +78,10 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     std::cout << "filtering took " << elapsedTime.count() << " milliseconds" << std::endl;
 
     return cloud_filtered;
-
 }
 
-/* *
+
+/**
 * Separates an input cloud in two groups given the indeces of first group 
 */
 template<typename PointT>
@@ -106,7 +107,8 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
     return segResult;
 }
 
-/* *
+
+/**
 * Apply RANSAC: the segmentation algorithm fits a plane to the points and uses the distance tolerance
 * to decide which points belong to that plane. A larger tolerance includes more points in the plane.
 * This is an iterative process, more iterations have a chance to return better results but take longer.
@@ -202,7 +204,9 @@ std::vector<typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::C
     return clusters;
 }
 
-
+/**
+* Set Box Coodinates of a point cloud so that it can be rendered
+*/
 template<typename PointT>
 Box ProcessPointClouds<PointT>::BoundingBox(typename pcl::PointCloud<PointT>::Ptr cluster)
 {
@@ -222,7 +226,7 @@ Box ProcessPointClouds<PointT>::BoundingBox(typename pcl::PointCloud<PointT>::Pt
     return box;
 }
 
-/* *
+/**
 * Save Point Cloud to File
 */
 template<typename PointT>
@@ -232,7 +236,7 @@ void ProcessPointClouds<PointT>::savePcd(typename pcl::PointCloud<PointT>::Ptr c
     std::cerr << "Saved " << cloud->points.size () << " data points to "+file << std::endl;
 }
 
-/* *
+/**
 * Load Single Point Cloud Data File
 */
 template<typename PointT>
@@ -250,7 +254,7 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::loadPcd(std::s
     return cloud;
 }
 
-/* *
+/**
 * Stream Chronologically Point Cloud Data from directory path
 */
 template<typename PointT>
