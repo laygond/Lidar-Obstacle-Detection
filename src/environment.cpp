@@ -169,7 +169,7 @@ int main (int argc, char** argv)
 
     // Create Viewer and set Angle
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-    CameraAngle setAngle = XY;
+    CameraAngle setAngle = XY; //FPS;
     initCamera(setAngle, viewer);
 
 
@@ -197,8 +197,8 @@ int main (int argc, char** argv)
     {
         viewer->spinOnce (); // controls the frame rate
     }
-    */ 
-
+    */
+     
 
     // ------ City Block Stream Multiple .pcd --------
     // Create point processor
