@@ -4,9 +4,8 @@ Very simple pipeline to detect vehicles in a point cloud data. This project crea
 <p align="center"> 
   <img src="./README_images/before_xy.gif">
   <img src="./README_images/after_xy.gif">
-  
-  Fig: Before and after obstacle detection
 </p>
+<p align="center"> Fig: Before and after obstacle detection </p>
 
 
 ## Directory Structure
@@ -37,9 +36,9 @@ Very simple pipeline to detect vehicles in a point cloud data. This project crea
     └── sensors
         ├── data/pcd
         │   ├── data_1              # main real-world dataset
-        │	  │	  └── ...
+        │   │	  └── ...
         │   ├── data_2              # extra real-world dataset
-        │	  │	  └── ...
+        │   │	  └── ...
         │   └── simpleHighway.pcd   # Copy of simulated pcd dataset
         └── lidar.h                 # lib for generating simulated pcd
 ```
@@ -64,24 +63,17 @@ Processing functions for filtering, segmenting, clustering, boxing, loading, and
 - `initCamera` Helps set different viewing angles in your window: XY (45 degree), TopDown, Side, and FPS (First Person Sense).
 
 ### Pipeline
-<p align="center"> 
-  <img src="./README_images/original.png">
-  
-  Fig: Original PCD
-</p>
+<p align="center"> <img src="./README_images/original.png"> </p>
+<p align="center">  Fig: Original PCD </p>
 
-<p align="center"> 
-  <img src="./README_images/pipeline.png">
-  
-  Fig: Step 1 -> <b>Filter:</b> downsample, choose region of interest, remove rooftop points. Step 2 -> <b>Segment</b> plane from objects using RANSAC. Step 3 -> <b>Cluster</b> objects above plane. Step 4 -> Apply Bounding Boxes.
-</p>
+<p align="center"> <img src="./README_images/pipeline.png"> </p>  
+<p align="center"> Fig: Step 1 -> <b>Filter:</b> downsample, choose region of interest, remove rooftop points. Step 2 -> <b>Segment</b> plane from objects using RANSAC. Step 3 -> <b>Cluster</b> objects above plane. Step 4 -> Apply Bounding Boxes. </p>
 
-<p align="center"> 
+<p align="center">
   <img src="./README_images/before_fps.gif">
   <img src="./README_images/after_fps.gif">
-  
-  Fig: Streaming back multiple pcd files through pipeline
 </p>
+<p align="center"> Fig: Streaming back multiple pcd files through pipeline </p>
 
 ### Additional Notes
 - Point cloud data can be very large. By instatinating on the heap, we have more memory to work with than the 2MB on the stack. However, it takes longer to look up objects on the heap, while stack lookup is very fast.
