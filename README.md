@@ -2,7 +2,8 @@
 Very simple pipeline to detect vehicles in a point cloud data. This project creates 3D bounding boxes to enclose vehicles by implementing 3D RANSAC for segmentation and KD-Tree & Euclidean algorithms for clustering. This repo uses [Udacity's SFND_Lidar_Obstacle_Detection repo](https://github.com/udacity/SFND_Lidar_Obstacle_Detection) as a base template and guide.
 
 <p align="center"> 
-  <img src="./README_images/final_XY.gif">
+  <img src="./README_images/before_xy.gif"><img src="./README_images/after_xy.gif">
+  Fig: Before and after obstacle detection
 </p>
 
 
