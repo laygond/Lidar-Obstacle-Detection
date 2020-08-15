@@ -2,7 +2,9 @@
 Very simple pipeline to detect vehicles in a point cloud data. This project creates 3D bounding boxes to enclose vehicles by implementing 3D RANSAC for segmentation and KD-Tree & Euclidean algorithms for clustering. This repo uses [Udacity's SFND_Lidar_Obstacle_Detection repo](https://github.com/udacity/SFND_Lidar_Obstacle_Detection) as a base template and guide.
 
 <p align="center"> 
-  <img src="./README_images/before_xy.gif"><img src="./README_images/after_xy.gif">
+  <img src="./README_images/before_xy.gif">
+  <img src="./README_images/after_xy.gif">
+  
   Fig: Before and after obstacle detection
 </p>
 
@@ -35,9 +37,9 @@ Very simple pipeline to detect vehicles in a point cloud data. This project crea
     └── sensors
         ├── data/pcd
         │   ├── data_1              # main real-world dataset
-		│	│	└── ...
+        │	  │	  └── ...
         │   ├── data_2              # extra real-world dataset
-		│	│	└── ...
+        │	  │	  └── ...
         │   └── simpleHighway.pcd   # Copy of simulated pcd dataset
         └── lidar.h                 # lib for generating simulated pcd
 ```
@@ -45,7 +47,7 @@ Very simple pipeline to detect vehicles in a point cloud data. This project crea
 ### Dataset
 The `environment.cpp` contains two sections:
 - simpleHighway: uses simulated Point Cloud Data which is generated on the spot by `lidar.h`
-- cityBlock    : uses real Point Cloud Data
+- cityBlock    : uses real-world Point Cloud Data stored at `data/pcd`
 
 ### Helper Functions
 Processing functions for filtering, segmenting, clustering, boxing, loading, and saving pcd are coded as [function templates](http://www.cplusplus.com/doc/oldtutorial/templates/) to process any type of PCD: PointXYZ, PointXYZI, etc.
@@ -64,16 +66,20 @@ Processing functions for filtering, segmenting, clustering, boxing, loading, and
 ### Pipeline
 <p align="center"> 
   <img src="./README_images/original.png">
+  
   Fig: Original PCD
 </p>
 
 <p align="center"> 
   <img src="./README_images/pipeline.png">
+  
   Fig: Step 1 -> <b>Filter:</b> downsample, choose region of interest, remove rooftop points. Step 2 -> <b>Segment</b> plane from objects using RANSAC. Step 3 -> <b>Cluster</b> objects above plane. Step 4 -> Apply Bounding Boxes.
 </p>
 
 <p align="center"> 
-  <img src="./README_images/final_FPS.gif">
+  <img src="./README_images/before_fps.gif">
+  <img src="./README_images/after_fps.gif">
+  
   Fig: Streaming back multiple pcd files through pipeline
 </p>
 
@@ -91,12 +97,12 @@ Not all vehicles have the same size so setting a fixed radius distance to search
 ## Installation
 Open your terminal and type:
 ```bash
-$> git clone https://github.com/laygond/Simple-Lidar-Obstacle-Detection.git
+git clone https://github.com/laygond/Simple-Lidar-Obstacle-Detection.git
 ```
 You will also need the Point Cloud Library (PCL) for this project.
 Open your terminal and type:
 ```bash
-$> sudo apt install libpcl-dev
+sudo apt install libpcl-dev
 ```
 For PCL in Windows and Mac go to the installation section from [here.](https://github.com/udacity/SFND_Lidar_Obstacle_Detection)
 
@@ -106,5 +112,5 @@ In terminal go to your Simple-Lidar-Obstacle-Detection repo and type:
 ./build.sh
 ./run.sh
 ```
-Note: you might need to `chmod +x` the build and run shell files.
+Note: you might need to `chmod +x build.sh` and `chmod +x run.sh` before executing.
 
